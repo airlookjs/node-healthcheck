@@ -1,5 +1,10 @@
 image: node:latest
 
+stages:
+  - test
+  - build
+  - deploy
+
 cache:
   paths:
     - node_modules/
@@ -9,7 +14,7 @@ test:
     - yarn install
     - yarn test
 
-deploy:
+build:
   stage: build
   script:
     - yarn build
