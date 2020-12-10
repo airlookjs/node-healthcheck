@@ -8,3 +8,14 @@ test:
   script:
     - yarn install
     - yarn test
+
+deploy:
+  stage: build
+  script:
+    - yarn build
+
+deploy:
+  stage: deploy
+  script:
+    - echo "//gitlab.gmab.net.dr.dk//api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc
+    - npm publish
