@@ -36,6 +36,6 @@ build:
 publish:
   stage: release
   script:
-    - yarn run semantic-release
+    - npx semantic-release
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

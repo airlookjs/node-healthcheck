@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf ./dist && babel src --out-dir ./dist --source-maps --copy-files",
-    "test": "mocha --require @babel/register 'src/*.spec.js'",
-    "semantic-release": "semantic-release"
+    "test": "mocha --require @babel/register 'src/*.spec.js'"
   },
   "publishConfig": {
     "access": "public"
