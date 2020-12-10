@@ -1,7 +1,7 @@
 default:
   image: node:latest
   before_script:
-    - npm ci --cache .npm --prefer-offline
+    - yarn install --frozen-lockfile
     - |
       {
         echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
@@ -26,7 +26,6 @@ stages:
 
 test:
   script:
-    - yarn install
     - yarn test
 
 build:
@@ -37,6 +36,6 @@ build:
 publish:
   stage: release
   script:
-    - npm run semantic-release
+    - yarn run semantic-release
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
