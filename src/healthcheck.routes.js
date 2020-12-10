@@ -1,0 +1,79 @@
+// healthcheck.routes.js: return a 2xx response when your server is healthy, else send a 5xx response
+import express from 'express';
+import os from "os";
+import { create } from 'xmlbuilder2'
+import _ from 'lodash'
+
+const NS_PER_SEC = 1e9;
+const MS_PER_NS = 1e6;
+export const STATUS_OK = 'OK'
+export const STATUS_ERROR = 'ERROR'
+
+export function make_checks(checksArray) {
+    return checksArray.map(function(check) {
+        return make_check(check);
+    });
+}
+
+async function make_check(check) {
+    
+    const startTime = process.hrtime(); // start timer
+    try {
+        const resp = await check.checkFn(check)
+        check.status = STATUS_OK
+        check.message = `${check.description}: ${resp || 'OK'}`
+
+    } catch(error) {
+        check.status = STATUS_ERROR
+        check.message = `${check.description} | ERROR was: ${error.message}` 
+    }
+
+    const timeDiff = process.hrtime(startTime); // end timer
+    const timeDiffInNanoseconds = (timeDiff[0] * NS_PER_SEC) + timeDiff[1]; 
+
+    check.responseinms = timeDiffInNanoseconds / MS_PER_NS;
+    return _.pick(check, ['name', 'status', 'message', 'responseinms']);
+}
+
+export default function getHealthRouter(healthchecks) {
+
+    const router = express.Router({})
+
+    router.get('/', async (_req, res, _next) => {
+
+        const checks = await Promise.all( make_checks(healthchecks) )
+
+        const status = {
+            applicationname: process.env.npm_package_name,
+            applicationversion: process.env.npm_package_version,
+            applicationstatus: (_.every(checks, ['status', STATUS_OK])) ? STATUS_OK : STATUS_ERROR,
+            servername: os.hostname(), 
+            uptime: process.uptime(),
+            timestamp: Date.now(),
+            check: checks
+        };
+    
+        if(status.applicationstatus != STATUS_OK) {
+            res.status(503)
+        }
+
+        const xmlResponse = function() {
+            const doc = create({status: status});
+            const xml = doc.end({ prettyPrint: true });
+            res.send(xml)
+        } 
+        
+        const jsonResponse = function() {
+            res.json(status)
+        } 
+
+        res.format({
+            xml: xmlResponse,
+            json: jsonResponse,
+            default: jsonResponse
+          })
+
+    });
+
+    return router
+}
