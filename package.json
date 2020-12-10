@@ -1,5 +1,5 @@
 {
-  "name": "@danmarks-radio-gmab/dr-node-healthcheck",
+  "name": "@give-me-a-break/dr-node-healthcheck",
   "version": "1.0.0",
   "main": "src/healthcheck.routes.js",
   "license": "MIT",
