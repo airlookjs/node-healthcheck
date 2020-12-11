@@ -36,6 +36,6 @@ build:
 publish:
   stage: release
   script:
-    - npx semantic-release
+    - npx semantic-release --debug
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
