@@ -18,6 +18,7 @@ workflow:
 
 variables:
   NPM_TOKEN: ${CI_JOB_TOKEN}
+  ENV NODE_TLS_REJECT_UNAUTHORIZED: "0"
 
 stages:
   - test
