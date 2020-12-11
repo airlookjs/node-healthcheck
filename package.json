@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "src/healthcheck.routes.js",
   "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://gitlab.gmab.net.dr.dk/give-me-a-break/dr-node-healthcheck.git"
+  },
   "scripts": {
     "build": "rm -rf ./dist && babel src --out-dir ./dist --source-maps --copy-files",
     "test": "mocha --require @babel/register 'src/*.spec.js'"
