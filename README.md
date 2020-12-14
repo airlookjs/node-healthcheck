@@ -1,5 +1,11 @@
 health endpoints for DR node applications, following XML scom standard 
 
+Installation:
+
+echo \"@give-me-a-break:registry\" \"https://gitlab.gmab.net.dr.dk/api/v4/packages/npm/\" >> .yarnrc
+
+yarn add '@give-me-a-break/dr-node-healthcheck'
+
 Usage example:
 
 ```javascript
