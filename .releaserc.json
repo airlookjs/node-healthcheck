@@ -1,5 +1,4 @@
 {
-    "repositoryUrl": "git@gitlab.gmab.net.dr.dk:give-me-a-break/dr-node-healthcheck.git",
     "branches": ["master"],
     "plugins": [
       "@semantic-release/commit-analyzer",
