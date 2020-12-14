@@ -6,8 +6,6 @@ default:
     - gmabdocker.net.dr.dk
   
   before_script:
-    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/
-    - update-ca-certificates --fresh
     - yarn install --frozen-lockfile
     - |
       {
@@ -40,6 +38,9 @@ test:
 publish:
   stage: release
   script:
+    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/
+    - update-ca-certificates --fresh
+    - npm config set cafile /usr/local/share/ca-certificates/dr-root-ca.crt
     - npx semantic-release --debug
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
