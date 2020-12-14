@@ -35,9 +35,6 @@ test:
 publish:
   stage: release
   script:
-    #- export DOCKER_HOST=tcp://${TEST_DOCKER_HOST}:2376
-    #- export DOCKER_TLS_VERIFY=1
-    #- export DOCKER_CERT_PATH=/etc/docker/certs.d/${TEST_DOCKER_HOST}/
     - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/ && update-ca-certificates #&& dockerd-entrypoint.sh || exit
     - ls /usr/local/share/ca-certificates/
     - npx semantic-release --debug
