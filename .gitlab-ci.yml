@@ -22,7 +22,7 @@ variables:
   NPM_TOKEN: ${CI_JOB_TOKEN}
   NODE_TLS_REJECT_UNAUTHORIZED: "0"
   #TEST_DOCKER_HOST: gmab.net.dr.dk.crt
-  GIT_SSL_NO_VERIFY: true
+  GIT_SSL_NO_VERIFY: "1"
 
 stages:
   - test
