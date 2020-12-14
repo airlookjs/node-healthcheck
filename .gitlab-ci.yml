@@ -4,10 +4,9 @@ default:
   image: node:latest
   tags:
     - gmabdocker.net.dr.dk
-
   
   before_script:
-    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/ && 
+    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/
     - update-ca-certificates --fresh
     - yarn install --frozen-lockfile
     - |
