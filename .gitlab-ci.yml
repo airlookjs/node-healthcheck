@@ -2,7 +2,13 @@
 
 default:
   image: node:latest
+  tags:
+    - gmabdocker.net.dr.dk
+
+  
   before_script:
+    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/ && 
+    - update-ca-certificates --fresh
     - yarn install --frozen-lockfile
     - |
       {
@@ -35,8 +41,6 @@ test:
 publish:
   stage: release
   script:
-    - cp /etc/gitlab-runner/certs/*.crt /usr/local/share/ca-certificates/ && update-ca-certificates #&& dockerd-entrypoint.sh || exit
-    - ls /usr/local/share/ca-certificates/
     - npx semantic-release --debug
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
