@@ -5,7 +5,7 @@ Usage example:
 ```javascript
 import express from 'express'
 import cors from 'cors'
-import getHealthRouter from './healthcheck.routes'
+import getHealthRouter from '@give-me-a-break/dr-node-healthcheck'
 
 const app = express()
 app.use(cors())
