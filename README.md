@@ -1,6 +1,6 @@
 Health / status endpoints for DR node applications, following XML scom standard. 
 
-See a live example running at: [https://ghub.gmab.net.dr.dk/status]
+See a live example running at: https://ghub.gmab.net.dr.dk/status
 
 ## Installation:
 
