@@ -1,12 +1,15 @@
-health endpoints for DR node applications, following XML scom standard 
+Health / status endpoints for DR node applications, following XML scom standard. 
 
-Installation:
+See a live example running at: [https://ghub.gmab.net.dr.dk/status]
 
-echo \"@give-me-a-break:registry\" \"https://gitlab.gmab.net.dr.dk/api/v4/packages/npm/\" >> .yarnrc
+## Installation:
 
-yarn add '@give-me-a-break/dr-node-healthcheck'
+    $ echo \"@give-me-a-break:registry\" \"https://gitlab.gmab.net.dr.dk/api/v4/packages/npm/\" >> .yarnrc
 
-Usage example:
+    $ yarn add '@give-me-a-break/dr-node-healthcheck'
+
+
+## Usage example:
 
 ```javascript
 import express from 'express'
