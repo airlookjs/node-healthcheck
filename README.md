@@ -4,10 +4,10 @@ Usage example:
 
 ```javascript
 import express from 'express'
+import cors from 'cors'
 import getHealthRouter from './healthcheck.routes'
 
 const app = express()
-
 app.use(cors())
 
 const checks = [{
@@ -40,8 +40,5 @@ const checks = [{
 
 app.use('/status', getHealthRouter(checks));
 
-
-
-
-
+...
 ```
