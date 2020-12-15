@@ -46,7 +46,7 @@ async function make_check(check) {
     return _.pick(check, ['name', 'status', 'message', 'responseinms']);
 }
 
-async function getStatus(healthchecks) {
+export async function getStatus(healthchecks) {
 
     const checks = await Promise.all( make_checks(healthchecks) )
 
@@ -62,7 +62,9 @@ async function getStatus(healthchecks) {
 }
 
 
-export default function getHealthRouter(healthchecks) {
+// TODO: export async function getFastifyHealthRoute(fastify, opts) {
+
+export default function getExpressHealthRoute(healthchecks) {
 
     const router = express.Router({})
 
