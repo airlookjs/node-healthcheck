@@ -8,7 +8,8 @@ const NS_PER_SEC = 1e9;
 const MS_PER_NS = 1e6;
 export const STATUS_OK = 'OK'
 export const STATUS_ERROR = 'ERROR'
-const STATUS_ERROR_CODE = 503
+export const STATUS_ERROR_CODE = 503
+export const DEFAULT_TIMEOUT = 5000
 
 export function make_checks(checksArray) {
     return checksArray.map(function(check) {
@@ -18,9 +19,18 @@ export function make_checks(checksArray) {
 
 async function make_check(check) {
     
+    const timeout = (typeof check.timeout === 'undefined') ? DEFAULT_TIMEOUT : check.timeout;
+
     const startTime = process.hrtime(); // start timer
     try {
-        const resp = await check.checkFn(check)
+        
+        const timedOutHandler = new Promise((resolve, reject) => {
+            setTimeout(function() {
+                reject(new Error("Check timed out"))
+            }, timeout);
+        });
+    
+        const resp = await Promise.race([check.checkFn(check), timedOutHandler])
         check.status = STATUS_OK
         check.message = `${check.description}: ${resp || 'OK'}`
 
@@ -36,7 +46,6 @@ async function make_check(check) {
     return _.pick(check, ['name', 'status', 'message', 'responseinms']);
 }
 
-export default function getHealthRouter(healthchecks) {
 async function getStatus(healthchecks) {
 
     const checks = await Promise.all( make_checks(healthchecks) )
@@ -50,8 +59,10 @@ async function getStatus(healthchecks) {
         timestamp: Date.now(),
         check: checks
     };
-
 }
+
+
+export default function getHealthRouter(healthchecks) {
 
     const router = express.Router({})
 
