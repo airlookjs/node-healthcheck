@@ -64,6 +64,11 @@ export async function getStatus(healthchecks) {
 
 // TODO: export async function getFastifyHealthRoute(fastify, opts) {
 
+export function getStatusXml(status) {
+    const doc = create({status: status});
+    return doc.end({ prettyPrint: true });
+}
+
 export default function getExpressHealthRoute(healthchecks) {
 
     const router = express.Router({})
@@ -75,19 +80,15 @@ export default function getExpressHealthRoute(healthchecks) {
         if(status.applicationstatus != STATUS_OK) {
             res.status(STATUS_ERROR_CODE)
         }
-
-        const xmlResponse = function() {
-            const doc = create({status: status});
-            const xml = doc.end({ prettyPrint: true });
-            res.send(xml)
-        } 
         
         const jsonResponse = function() {
             res.json(status)
         } 
 
         res.format({
-            xml: xmlResponse,
+            xml: function() {
+                res.send(getStatusXml())
+            },
             json: jsonResponse,
             default: jsonResponse
           })
