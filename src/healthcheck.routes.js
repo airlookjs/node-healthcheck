@@ -26,7 +26,7 @@ async function make_check(check) {
         
         const timedOutHandler = new Promise((resolve, reject) => {
             setTimeout(function() {
-                reject(new Error("Check timed out"))
+                reject(new Error("Check did not complete before timeout of ${timeout}ms"))
             }, timeout);
         });
     
