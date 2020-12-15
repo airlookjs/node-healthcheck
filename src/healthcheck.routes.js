@@ -8,6 +8,7 @@ const NS_PER_SEC = 1e9;
 const MS_PER_NS = 1e6;
 export const STATUS_OK = 'OK'
 export const STATUS_ERROR = 'ERROR'
+const STATUS_ERROR_CODE = 503
 
 export function make_checks(checksArray) {
     return checksArray.map(function(check) {
@@ -36,25 +37,30 @@ async function make_check(check) {
 }
 
 export default function getHealthRouter(healthchecks) {
+async function getStatus(healthchecks) {
+
+    const checks = await Promise.all( make_checks(healthchecks) )
+
+    return {
+        applicationname: process.env.npm_package_name,
+        applicationversion: process.env.npm_package_version,
+        applicationstatus: (_.every(checks, ['status', STATUS_OK])) ? STATUS_OK : STATUS_ERROR,
+        servername: os.hostname(), 
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+        check: checks
+    };
+
+}
 
     const router = express.Router({})
 
     router.get('/', async (_req, res, _next) => {
 
-        const checks = await Promise.all( make_checks(healthchecks) )
-
-        const status = {
-            applicationname: process.env.npm_package_name,
-            applicationversion: process.env.npm_package_version,
-            applicationstatus: (_.every(checks, ['status', STATUS_OK])) ? STATUS_OK : STATUS_ERROR,
-            servername: os.hostname(), 
-            uptime: process.uptime(),
-            timestamp: Date.now(),
-            check: checks
-        };
+        const status = await getStatus(healthchecks)
     
         if(status.applicationstatus != STATUS_OK) {
-            res.status(503)
+            res.status(STATUS_ERROR_CODE)
         }
 
         const xmlResponse = function() {
