@@ -56,7 +56,7 @@ export async function getStatus(healthchecks) {
         applicationstatus: (_.every(checks, ['status', STATUS_OK])) ? STATUS_OK : STATUS_ERROR,
         servername: os.hostname(), 
         uptime: process.uptime(),
-        timestamp: Date.now(),
+        timestamp: new Date().toISOString(),
         check: checks
     };
 }
@@ -82,7 +82,7 @@ export default function getExpressHealthRoute(healthchecks) {
         }
         
         const jsonResponse = function() {
-            res.json(status)
+            res.json({status: status})
         } 
 
         res.format({

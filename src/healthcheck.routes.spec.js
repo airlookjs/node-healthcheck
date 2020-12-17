@@ -3,7 +3,7 @@ import should from 'should'
 import express from 'express'
 import request from 'supertest'
 import getHealthRouter, {STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT} from './healthcheck.routes'
-
+    
 describe('healthcheck.routes', function() {
 
     const checkThatWillFail = {
@@ -48,7 +48,7 @@ describe('healthcheck.routes', function() {
     
     });
 
-    it('status endpoint should return json', function(done){
+    it('status endpoint should return json, and encode date as ISO8601', function(done){
         const app = express();
         app.use('/', getHealthRouter([checkThatWillSucceed, checkThatWillSucceed]) );
 
@@ -58,8 +58,11 @@ describe('healthcheck.routes', function() {
         .expect(200)
         .end(function(err, res) {
             if (err) return done(err);
-            //TODO: validate json 
-            done()
+            // validate json
+            res.body.status.should.be.an.Object()
+            res.body.status.timestamp.should.be.a.String()
+            new Date(res.body.status.timestamp).toISOString().should.equal(res.body.status.timestamp)
+            done();
           });
     
     });
@@ -74,7 +77,7 @@ describe('healthcheck.routes', function() {
         .expect(STATUS_ERROR_CODE)
         .end(function(err, res) {
             if (err) return done(err);
-            res.body.applicationstatus.should.equal(STATUS_ERROR);
+            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
             done()
           });
         
@@ -90,7 +93,7 @@ describe('healthcheck.routes', function() {
         .expect(200)
         .end(function(err, res) {
             if (err) return done(err);
-            res.body.applicationstatus.should.equal(STATUS_OK);
+            res.body.status.applicationstatus.should.equal(STATUS_OK);
             done()
           });
 
@@ -106,7 +109,7 @@ describe('healthcheck.routes', function() {
         .expect(STATUS_ERROR_CODE)
         .end(function(err, res) {
             if (err) return done(err);
-            res.body.applicationstatus.should.equal(STATUS_ERROR);
+            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
             done()
           });
 
@@ -132,7 +135,7 @@ describe('healthcheck.routes', function() {
         .expect(STATUS_ERROR_CODE)
         .end(function(err, res) {
             if (err) return done(err);
-            res.body.applicationstatus.should.equal(STATUS_ERROR);
+            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
             done()
           });
 
