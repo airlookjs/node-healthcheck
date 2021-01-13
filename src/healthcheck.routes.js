@@ -26,7 +26,7 @@ async function make_check(check) {
         
         const timedOutHandler = new Promise((resolve, reject) => {
             setTimeout(function() {
-                reject(new Error("Check did not complete before timeout of ${timeout}ms"))
+                reject(new Error(`Check did not complete before timeout of ${timeout}ms`))
             }, timeout);
         });
     
@@ -69,7 +69,7 @@ export function getStatusXml(status) {
     return doc.end({ prettyPrint: true });
 }
 
-export default function getExpressHealthRoute(healthchecks) {
+export const getExpressHealthRoute = function(healthchecks) {
 
     const router = express.Router({})
 
@@ -97,3 +97,4 @@ export default function getExpressHealthRoute(healthchecks) {
 
     return router
 }
+export default getExpressHealthRoute
