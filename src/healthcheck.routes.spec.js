@@ -2,7 +2,7 @@ import sinon from 'sinon'
 import should from 'should'
 import express from 'express'
 import request from 'supertest'
-import getHealthRouter, {STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT} from './healthcheck.routes'
+import { getExpressHealthRoute, STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT} from './healthcheck.routes'
     
 describe('healthcheck.routes', function() {
 
@@ -34,7 +34,7 @@ describe('healthcheck.routes', function() {
     it('status endpoint should return xml', function(done){
         const app = express();
 
-        app.use('/', getHealthRouter([checkThatWillSucceed, checkThatWillSucceed]) );
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
         request(app).get('/')
         .set({"Accept":"application/xml"})
@@ -50,7 +50,7 @@ describe('healthcheck.routes', function() {
 
     it('status endpoint should return json, and encode date as ISO8601', function(done){
         const app = express();
-        app.use('/', getHealthRouter([checkThatWillSucceed, checkThatWillSucceed]) );
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
         request(app).get('/')
         .set({"Accept":"application/json"})
@@ -70,7 +70,7 @@ describe('healthcheck.routes', function() {
 
     it('if any check does not return status OK, applicationstatus should be ERROR', function(done){
         const app = express();
-        app.use('/', getHealthRouter([checkThatWillSucceed, checkThatWillFail]) );
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillFail]) );
 
         request(app).get('/')
         .set({"Accept":"application/json"})
@@ -86,7 +86,7 @@ describe('healthcheck.routes', function() {
 
     it('if all checks return status OK, applicationstatus should be OK', function(done){
         const app = express();
-        app.use('/', getHealthRouter([checkThatWillSucceed, checkThatWillSucceed]) );
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
         request(app).get('/')
         .set({"Accept":"application/json"})
@@ -102,7 +102,7 @@ describe('healthcheck.routes', function() {
 
     it('check should time out', function(done){
         const app = express();
-        app.use('/', getHealthRouter([checkThatWillTimeout]) );
+        app.use('/', getExpressHealthRoute([checkThatWillTimeout]) );
 
         request(app).get('/')
         .set({"Accept":"application/json"})
@@ -128,7 +128,7 @@ describe('healthcheck.routes', function() {
         }
 
         const app = express();
-        app.use('/', getHealthRouter([checkThatWillNeverFinish]) );
+        app.use('/', getExpressHealthRoute([checkThatWillNeverFinish]) );
 
         request(app).get('/')
         .set({"Accept":"application/json"})
