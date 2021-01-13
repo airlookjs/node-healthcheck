@@ -2,6 +2,8 @@ import sinon from 'sinon'
 import should from 'should'
 import express from 'express'
 import request from 'supertest'
+import { create } from 'xmlbuilder2'
+
 import { getExpressHealthRoute, STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT} from './healthcheck.routes'
     
 describe('healthcheck.routes', function() {
@@ -42,7 +44,13 @@ describe('healthcheck.routes', function() {
         .expect(200)
         .end(function(err, res) {
             if (err) return done(err);
-            //TODO: validate xml
+            const docObj = create(res.text).end({ format: 'object' })
+
+            docObj.status.should.be.an.Object()
+            docObj.status.check.should.be.an.Object()
+            docObj.status.timestamp.should.be.a.String()
+            docObj.status.applicationstatus.should.equal(STATUS_OK);
+
             done()
           });
     

@@ -87,7 +87,7 @@ export const getExpressHealthRoute = function(healthchecks) {
 
         res.format({
             xml: function() {
-                res.send(getStatusXml())
+                res.send(getStatusXml(status))
             },
             json: jsonResponse,
             default: jsonResponse
