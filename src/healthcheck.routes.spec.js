@@ -103,7 +103,7 @@ describe('healthcheck.routes', function() {
     });
 
 
-    it('if any check does not return status OK, applicationstatus should be ERROR', function(done){
+    it('if any check returns STATUS_ERROR, applicationstatus should be ERROR', function(done){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillFail]) );
 
