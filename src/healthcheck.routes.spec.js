@@ -4,7 +4,7 @@ import express from 'express'
 import request from 'supertest'
 import { create } from 'xmlbuilder2'
 
-import { getExpressHealthRoute, STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT} from './healthcheck.routes'
+import { getExpressHealthRoute, STATUS_ERROR, STATUS_OK, STATUS_ERROR_CODE, DEFAULT_TIMEOUT, STATUS_WARNING} from './healthcheck.routes'
     
 describe('healthcheck.routes', function() {
 
@@ -16,6 +16,29 @@ describe('healthcheck.routes', function() {
             breakfast = "just constant eggs"
         }
     }
+
+    const checkThatWillWarn = {
+        name: "Warning",
+        description: "Will return a warning on throw, preset",
+        warnOnError: true,
+
+        checkFn: function() {
+            const breakfast = "";
+            breakfast = "just constant eggs"
+        }
+    }
+
+    const checkThatWillWarnInteractive = {
+        name: "Warning",
+        description: "Will return a warning on throw, interactive",
+
+        checkFn: function(check) {
+            check.warnOnError = true
+            const breakfast = "";
+            breakfast = "just constant eggs"
+        }
+    }
+
     const checkThatWillSucceed = {
             name: "yay",
             description: "It will be fine",
@@ -33,6 +56,8 @@ describe('healthcheck.routes', function() {
         }
     }
 
+
+
     it('status endpoint should return xml', function(done){
         const app = express();
 
@@ -43,6 +68,8 @@ describe('healthcheck.routes', function() {
         .expect('Content-Type', /xml/)
         .expect(200)
         .end(function(err, res) {
+
+            console.log("test return")
             if (err) return done(err);
             const docObj = create(res.text).end({ format: 'object' })
 
@@ -51,7 +78,7 @@ describe('healthcheck.routes', function() {
             docObj.status.timestamp.should.be.a.String()
             docObj.status.applicationstatus.should.equal(STATUS_OK);
 
-            done()
+            return done()
           });
     
     });
@@ -148,5 +175,105 @@ describe('healthcheck.routes', function() {
           });
 
     });
+
+    it('status endpoint should warn', function(done){
+        const app = express();
+
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillWarn]) );
+
+        request(app).get('/')
+        .set({"Accept":"application/xml"})
+        .expect('Content-Type', /xml/)
+        .expect(200)
+        .end(function(err, res) {
+            if (err) return done(err);
+            const docObj = create(res.text).end({ format: 'object' })
+
+            docObj.status.should.be.an.Object()
+            docObj.status.check.should.be.an.Object()
+            docObj.status.timestamp.should.be.a.String()
+            docObj.status.applicationstatus.should.equal(STATUS_WARNING);
+
+            done()
+          });
+    
+    });
+
+    it('status endpoint should return most severe status', function(done){
+        const app = express();
+
+        app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillWarn, checkThatWillFail]) );
+
+        request(app).get('/')
+        .set({"Accept":"application/xml"})
+        .expect('Content-Type', /xml/)
+        .expect(STATUS_ERROR_CODE)
+        .end(function(err, res) {
+            if (err) return done(err);
+            const docObj = create(res.text).end({ format: 'object' })
+
+            docObj.status.should.be.an.Object()
+            docObj.status.check.should.be.an.Object()
+            docObj.status.timestamp.should.be.a.String()
+            docObj.status.applicationstatus.should.equal(STATUS_ERROR);
+
+            done()
+          });
+    
+    });
       
+
+    it('check can override check object in check method', function(done){
+        const app = express();
+
+        app.use('/', getExpressHealthRoute([checkThatWillWarnInteractive]) );
+
+        request(app).get('/')
+        .set({"Accept":"application/xml"})
+        .expect('Content-Type', /xml/)
+        .expect(200)
+        .end(function(err, res) {
+            if (err) return done(err);
+            const docObj = create(res.text).end({ format: 'object' })
+
+            docObj.status.should.be.an.Object()
+            docObj.status.check.should.be.an.Object()
+            docObj.status.timestamp.should.be.a.String()
+            docObj.status.applicationstatus.should.equal(STATUS_WARNING);
+
+            done()
+          });
+    });
+
+
+
+   /* it('check can be called multiple times', function(done){
+        let testValue = 0;
+
+        const interactiveTest = {
+            name: "fail on 1, warn on 2",
+            checkFn: function() {
+                if(testValue === 0) {
+                    return
+                } else if(testValue === 1) {
+                    
+                }
+            }
+        }
+
+        const app = express();
+        app.use('/', getExpressHealthRoute([interactiveTest]) );
+
+        request(app).get('/')
+        .set({"Accept":"application/json"})
+        .expect(STATUS_ERROR_CODE)
+        .end(function(err, res) {
+            if (err) return done(err);
+            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
+            done()
+          });
+
+    });*/
+
+
 });

@@ -14,7 +14,7 @@ See a live example running at: https://ghub.gmab.net.dr.dk/status
 ```javascript
 import express from 'express'
 import cors from 'cors'
-import getHealthRouter from '@give-me-a-break/dr-node-healthcheck'
+import { getExpressHealthRoute } from '@give-me-a-break/dr-node-healthcheck'
 
 const app = express()
 app.use(cors())
@@ -47,7 +47,7 @@ const checks = [{
 },
 ]
 
-app.use('/status', getHealthRouter(checks));
+app.use('/status', getExpressHealthRoute(checks));
 
 ...
 ```
