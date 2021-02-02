@@ -45,7 +45,7 @@ describe('healthcheck.routes', function() {
         }
     }
 
-    it('status endpoint should return xml', async function(){
+    it('status endpoint should return xml and encode date as ISO8601', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
@@ -61,9 +61,12 @@ describe('healthcheck.routes', function() {
         status.check.should.be.an.Object()
         status.timestamp.should.be.a.String()
         status.applicationstatus.should.equal(STATUS_OK);
+
+        new Date(status.timestamp).toISOString().should.equal(status.timestamp)
+    
     });
 
-    it('status endpoint should return json, and encode date as ISO8601', async function(){
+    it('status endpoint should return json and encode date as ISO8601', async function(){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
