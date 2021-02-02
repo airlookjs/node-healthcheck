@@ -28,17 +28,6 @@ describe('healthcheck.routes', function() {
         }
     }
 
-    const checkThatWillWarnInteractive = {
-        name: "Warning",
-        description: "Will return a warning on throw, interactive",
-
-        checkFn: function(check) {
-            check.warnOnError = true
-            const breakfast = "";
-            breakfast = "just constant eggs"
-        }
-    }
-
     const checkThatWillSucceed = {
             name: "yay",
             description: "It will be fine",
@@ -56,8 +45,6 @@ describe('healthcheck.routes', function() {
         }
     }
 
-
-
     it('status endpoint should return xml', async function(){
         const app = express();
 
@@ -74,8 +61,6 @@ describe('healthcheck.routes', function() {
         status.check.should.be.an.Object()
         status.timestamp.should.be.a.String()
         status.applicationstatus.should.equal(STATUS_OK);
-
-    
     });
 
     it('status endpoint should return json, and encode date as ISO8601', async function(){
@@ -157,7 +142,7 @@ describe('healthcheck.routes', function() {
 
     });
 
-    it('status endpoint should warn', async function(){
+    it('status endpoint should warn, flag set in check object', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillWarn]) );
@@ -190,13 +175,22 @@ describe('healthcheck.routes', function() {
         status.check.should.be.an.Object()
         status.timestamp.should.be.a.String()
         status.applicationstatus.should.equal(STATUS_ERROR);
-
-    
     });
       
 
-    it('check can override check object in check method', async function(){
+    it('check should warn with flag set in function', async function(){
         const app = express();
+
+        const checkThatWillWarnInteractive = {
+            name: "Warning",
+            description: "Will return a warning on throw, interactive",
+    
+            checkFn: function(check) {
+                check.warnOnError = true
+                const breakfast = "";
+                breakfast = "just constant eggs"
+            }
+        }
 
         app.use('/', getExpressHealthRoute([checkThatWillWarnInteractive]) );
 
@@ -214,6 +208,47 @@ describe('healthcheck.routes', function() {
 
     });
 
+    it('check status and message can be overridden manually', async function(){
+        const app = express();
+
+        let customWarn = true
+        const customMessage = "this is just a warning"
+        
+        const checkWithManualOverrides = {
+            name: "a check",
+            description: "this is the check description",
+    
+            checkFn: function(check) {
+                if(customWarn) {
+                    check.message = customMessage
+                    check.status = STATUS_WARNING
+                }
+            }
+        }
+
+        app.use('/', getExpressHealthRoute([checkWithManualOverrides]) );
+
+        let res = await request(app).get('/')
+        .set({"Accept":"application/json"})
+        .expect(200)
+        
+        let status = res.body.status
+        status.applicationstatus.should.equal(STATUS_WARNING)
+
+        status.check[0].message.should.equal(customMessage)
+        status.check[0].status.should.equal(STATUS_WARNING)
+
+        customWarn = false
+        res = await request(app).get('/')
+        .set({"Accept":"application/json"})
+        .expect(200)
+        
+        status = res.body.status
+        status.applicationstatus.should.equal(STATUS_OK)
+        status.check[0].status.should.equal(STATUS_OK)
+
+
+    });
 
 
    it('sample application with test that checks variables', async function(){
