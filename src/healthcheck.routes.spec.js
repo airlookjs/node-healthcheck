@@ -58,99 +58,83 @@ describe('healthcheck.routes', function() {
 
 
 
-    it('status endpoint should return xml', function(done){
+    it('status endpoint should return xml', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/xml"})
         .expect('Content-Type', /xml/)
         .expect(200)
-        .end(function(err, res) {
 
-            console.log("test return")
-            if (err) return done(err);
-            const docObj = create(res.text).end({ format: 'object' })
+        const status = create(res.text).end({ format: 'object' }).status
 
-            docObj.status.should.be.an.Object()
-            docObj.status.check.should.be.an.Object()
-            docObj.status.timestamp.should.be.a.String()
-            docObj.status.applicationstatus.should.equal(STATUS_OK);
+        status.should.be.an.Object()
+        status.check.should.be.an.Object()
+        status.timestamp.should.be.a.String()
+        status.applicationstatus.should.equal(STATUS_OK);
 
-            return done()
-          });
     
     });
 
-    it('status endpoint should return json, and encode date as ISO8601', function(done){
+    it('status endpoint should return json, and encode date as ISO8601', async function(){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/json"})
         .expect('Content-Type', /json/)
         .expect(200)
-        .end(function(err, res) {
-            if (err) return done(err);
-            // validate json
-            res.body.status.should.be.an.Object()
-            res.body.status.timestamp.should.be.a.String()
-            new Date(res.body.status.timestamp).toISOString().should.equal(res.body.status.timestamp)
-            done();
-          });
+
+        // validate json
+        res.body.status.should.be.an.Object()
+        res.body.status.timestamp.should.be.a.String()
+        new Date(res.body.status.timestamp).toISOString().should.equal(res.body.status.timestamp)
     
     });
 
 
-    it('if any check returns STATUS_ERROR, applicationstatus should be ERROR', function(done){
+    it('if any check returns STATUS_ERROR, applicationstatus should be ERROR', async function(){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillFail]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/json"})
         .expect(STATUS_ERROR_CODE)
-        .end(function(err, res) {
-            if (err) return done(err);
-            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
-            done()
-          });
+
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
         
     });
 
 
-    it('if all checks return status OK, applicationstatus should be OK', function(done){
+    it('if all checks return status OK, applicationstatus should be OK', async function(){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillSucceed]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/json"})
         .expect(200)
-        .end(function(err, res) {
-            if (err) return done(err);
-            res.body.status.applicationstatus.should.equal(STATUS_OK);
-            done()
-          });
+
+        res.body.status.applicationstatus.should.equal(STATUS_OK);
+
 
     });
 
 
-    it('check should time out', function(done){
+    it('check should time out', async function(){
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillTimeout]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/json"})
         .expect(STATUS_ERROR_CODE)
-        .end(function(err, res) {
-            if (err) return done(err);
-            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
-            done()
-          });
+        
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
 
     });
 
-    it('check should time out with default time out if it never returns', function(done){
+    it('check should time out with default time out if it never returns', async function(){
 
         this.timeout(DEFAULT_TIMEOUT + 1000); 
 
@@ -165,115 +149,117 @@ describe('healthcheck.routes', function() {
         const app = express();
         app.use('/', getExpressHealthRoute([checkThatWillNeverFinish]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/json"})
         .expect(STATUS_ERROR_CODE)
-        .end(function(err, res) {
-            if (err) return done(err);
-            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
-            done()
-          });
+
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
 
     });
 
-    it('status endpoint should warn', function(done){
+    it('status endpoint should warn', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillWarn]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/xml"})
         .expect('Content-Type', /xml/)
         .expect(200)
-        .end(function(err, res) {
-            if (err) return done(err);
-            const docObj = create(res.text).end({ format: 'object' })
 
-            docObj.status.should.be.an.Object()
-            docObj.status.check.should.be.an.Object()
-            docObj.status.timestamp.should.be.a.String()
-            docObj.status.applicationstatus.should.equal(STATUS_WARNING);
-
-            done()
-          });
-    
+        const status = create(res.text).end({ format: 'object' }).status
+        status.should.be.an.Object()
+        status.check.should.be.an.Object()
+        status.timestamp.should.be.a.String()
+        status.applicationstatus.should.equal(STATUS_WARNING);
     });
 
-    it('status endpoint should return most severe status', function(done){
+    it('status endpoint should return most severe status', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillSucceed, checkThatWillWarn, checkThatWillFail]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/xml"})
         .expect('Content-Type', /xml/)
         .expect(STATUS_ERROR_CODE)
-        .end(function(err, res) {
-            if (err) return done(err);
-            const docObj = create(res.text).end({ format: 'object' })
 
-            docObj.status.should.be.an.Object()
-            docObj.status.check.should.be.an.Object()
-            docObj.status.timestamp.should.be.a.String()
-            docObj.status.applicationstatus.should.equal(STATUS_ERROR);
+        const status = create(res.text).end({ format: 'object' }).status
 
-            done()
-          });
+        status.should.be.an.Object()
+        status.check.should.be.an.Object()
+        status.timestamp.should.be.a.String()
+        status.applicationstatus.should.equal(STATUS_ERROR);
+
     
     });
       
 
-    it('check can override check object in check method', function(done){
+    it('check can override check object in check method', async function(){
         const app = express();
 
         app.use('/', getExpressHealthRoute([checkThatWillWarnInteractive]) );
 
-        request(app).get('/')
+        const res = await request(app).get('/')
         .set({"Accept":"application/xml"})
         .expect('Content-Type', /xml/)
         .expect(200)
-        .end(function(err, res) {
-            if (err) return done(err);
-            const docObj = create(res.text).end({ format: 'object' })
+        
+        const status = create(res.text).end({ format: 'object' }).status
 
-            docObj.status.should.be.an.Object()
-            docObj.status.check.should.be.an.Object()
-            docObj.status.timestamp.should.be.a.String()
-            docObj.status.applicationstatus.should.equal(STATUS_WARNING);
+        status.should.be.an.Object()
+        status.check.should.be.an.Object()
+        status.timestamp.should.be.a.String()
+        status.applicationstatus.should.equal(STATUS_WARNING);
 
-            done()
-          });
     });
 
 
 
-   /* it('check can be called multiple times', function(done){
-        let testValue = 0;
+   it('sample application with test that checks variables', async function(){
+        let appWarning = false
+        let appError = false
 
-        const interactiveTest = {
-            name: "fail on 1, warn on 2",
-            checkFn: function() {
-                if(testValue === 0) {
-                    return
-                } else if(testValue === 1) {
-                    
+        const appTest = {
+            name: "check for error or warning",
+            checkFn: function(check) {
+                if(appError) {
+                    throw new Error("warning")
+                } else if(appWarning) {
+                    check.warnOnError = true
+                    throw new Error("error")
                 }
             }
         }
 
         const app = express();
-        app.use('/', getExpressHealthRoute([interactiveTest]) );
+        app.use('/', getExpressHealthRoute([appTest]) );
 
-        request(app).get('/')
+        let res = await request(app).get('/')
         .set({"Accept":"application/json"})
-        .expect(STATUS_ERROR_CODE)
-        .end(function(err, res) {
-            if (err) return done(err);
-            res.body.status.applicationstatus.should.equal(STATUS_ERROR);
-            done()
-          });
+        .expect(200)
+        res.body.status.applicationstatus.should.equal(STATUS_OK);
 
-    });*/
+        appWarning = true;
+        res = await request(app).get('/')
+          .set({"Accept":"application/json"})
+          .expect(200)
+        res.body.status.applicationstatus.should.equal(STATUS_WARNING);
+        
+        appError = true
+        res = await request(app).get('/')
+            .set({"Accept":"application/json"})
+            .expect(STATUS_ERROR_CODE)
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
+
+        appError = false
+        appWarning = false
+        res = await request(app).get('/')
+            .set({"Accept":"application/json"})
+            .expect(200)
+        res.body.status.applicationstatus.should.equal(STATUS_OK);
+
+    });
 
 
 });
