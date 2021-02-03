@@ -106,11 +106,14 @@ const check = {
             
             if (availableBytes < config.criticalStorageLimit) {
                 check.status = "ERROR"
+                return "storage is critical"
             }
             if (availableBytes < config.warningStorageLimit) {
                 check.status = "WARNING"
+                return "storage is low"
             }
             check.status = "OK"
+            return "storage is sufficient"
             
         }
 }
