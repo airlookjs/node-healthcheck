@@ -118,9 +118,6 @@ const check = {
 
 A custom status may also be set but at the moment the applicationstatus only works for the following states "OK", "ERROR", "WARNING". Most severe state is always reported as applicationstatus   
 
-
-### Errors
-
 ### Using express router and multiple application tests:
 
 ```javascript
