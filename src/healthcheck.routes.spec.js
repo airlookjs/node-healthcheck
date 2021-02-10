@@ -79,7 +79,8 @@ describe('healthcheck.routes', function() {
         res.body.status.should.be.an.Object()
         res.body.status.timestamp.should.be.a.String()
         new Date(res.body.status.timestamp).toISOString().should.equal(res.body.status.timestamp)
-    
+        res.body.status.check[0].message.should.startWith(checkThatWillSucceed.description)
+
     });
 
 
@@ -91,6 +92,7 @@ describe('healthcheck.routes', function() {
         .set({"Accept":"application/json"})
         .expect(STATUS_ERROR_CODE)
 
+        res.body.status.check[1].message.should.startWith(checkThatWillFail.description)
         res.body.status.applicationstatus.should.equal(STATUS_ERROR);
         
     });
@@ -119,23 +121,70 @@ describe('healthcheck.routes', function() {
         .expect(STATUS_ERROR_CODE)
         
         res.body.status.applicationstatus.should.equal(STATUS_ERROR);
-
     });
 
-    it('check should time out with default time out if it never returns', async function(){
+    it('check should handle timeout correctly with check that throws late', async function(){
+        const app = express();
+
+        const check = {
+            name: "throws after timeout",
+            timeout: 100,
+            checkFn: async function() {
+                await new Promise(resolve => setTimeout(function() {
+                    resolve("done")
+                }, 200));
+                
+                throw new Error("nested throw")
+
+            }
+        }
+
+        app.use('/', getExpressHealthRoute([check]) );
+
+        const res = await request(app).get('/')
+        .set({"Accept":"application/json"})
+        .expect(STATUS_ERROR_CODE)
+        
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
+
+    })
+
+    it('check should handle timeout correctly with check that rejects late', async function(){
+        const app = express();
+
+        const check = {
+            name: "rejects after timeout",
+            timeout: 100,
+            checkFn: async function() {
+                return await new Promise( (resolve, reject) => {
+                    setTimeout(function() { reject("nested reject") }, 200)
+                })
+            }
+        }
+
+        app.use('/', getExpressHealthRoute([check]) );
+
+        const res = await request(app).get('/')
+        .set({"Accept":"application/json"})
+        .expect(STATUS_ERROR_CODE)
+        
+        res.body.status.applicationstatus.should.equal(STATUS_ERROR);
+    })
+
+    it('check should time out with default timeout if it never returns', async function(){
 
         this.timeout(DEFAULT_TIMEOUT + 1000); 
 
-        const checkThatWillNeverFinish = {
+        const check = {
             name: "won't ever make it",
             description: "eternal loop",
             checkFn: async function() {
-                await new Promise(() => {})
+                await new Promise(resolve => {});
             }
         }
 
         const app = express();
-        app.use('/', getExpressHealthRoute([checkThatWillNeverFinish]) );
+        app.use('/', getExpressHealthRoute([check]) );
 
         const res = await request(app).get('/')
         .set({"Accept":"application/json"})

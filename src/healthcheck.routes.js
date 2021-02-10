@@ -14,6 +14,14 @@ export const DEFAULT_TIMEOUT = 5000
 
 const STATUS_VALUES = [STATUS_OK, STATUS_WARNING, STATUS_ERROR]
 
+const timeout = (prom, time, exception) => {
+    let timer;
+    return Promise.race([
+        prom,
+        new Promise((_r, rej) => timer = setTimeout(rej, time, exception))
+    ]).finally(() => clearTimeout(timer));
+}
+
 export function make_checks(checksArray) {
     return checksArray.map(function(check) {
         return make_check(_.clone(check));
@@ -21,41 +29,53 @@ export function make_checks(checksArray) {
 }
 
 async function make_check(check) {
-    
-    const timeout = (typeof check.timeout === 'undefined') ? DEFAULT_TIMEOUT : check.timeout;
-    const startTime = process.hrtime(); // start timer
-    try {
         
-        const timedOutHandler = new Promise((resolve, reject) => {
-            setTimeout(function() {
-                reject(new Error(`Check did not complete before timeout of ${timeout}ms`))
-            }, timeout);
-        });
-    
-        const resp = await Promise.race([check.checkFn(check), timedOutHandler])
+        const timeout_ms = (typeof check.timeout === 'undefined') ? DEFAULT_TIMEOUT : check.timeout
+        const message_prefix = (typeof check.description === 'undefined') ? "" : check.description + ":"
 
-        if(!check.status) {
-            check.status = STATUS_OK
+        const startTime = process.hrtime() // start timer
+
+        const checkFnPromise = new Promise(async (resolve, reject) => {
+            try {
+                const res = await check.checkFn(check)
+                resolve(res)
+            } catch(error) {
+                reject(error) 
+            }
+        })
+
+        const timeoutError = Symbol()
+        try {
+            
+            const resp = await timeout(checkFnPromise, timeout_ms, timeoutError)
+
+            if(!check.status) {
+                check.status = STATUS_OK
+            }
+            if(!check.message) {
+                check.message = `${message_prefix} ${resp || 'OK'}`
+            }
+
+        } catch (error) {
+            if( check.warnOnError ) {
+                check.status = STATUS_WARNING
+            } else  {
+                check.status = STATUS_ERROR
+            }
+
+            if (error === timeoutError) {
+                check.message = `${message_prefix} ERROR was: Check did not complete before timeout of ${timeout_ms}ms` 
+            } else {
+                check.message = `${message_prefix} ERROR was: ${error.message}` 
+            }
         }
-        if(!check.message) {
-            check.message = `${check.description}: ${resp || 'OK'}`
-        }
 
-    } catch(error) {
-        if( check.warnOnError ) {
-            check.status = STATUS_WARNING
-        } else  {
-            check.status = STATUS_ERROR
-        }
+        const timeDiff = process.hrtime(startTime); // end timer
+        const timeDiffInNanoseconds = (timeDiff[0] * NS_PER_SEC) + timeDiff[1]
 
-        check.message = `${check.description} | ERROR was: ${error.message}` 
-    }
+        check.responseinms = timeDiffInNanoseconds / MS_PER_NS
 
-    const timeDiff = process.hrtime(startTime); // end timer
-    const timeDiffInNanoseconds = (timeDiff[0] * NS_PER_SEC) + timeDiff[1]; 
-
-    check.responseinms = timeDiffInNanoseconds / MS_PER_NS;
-    return _.pick(check, ['name', 'status', 'message', 'responseinms']);
+        return _.pick(check, ['name', 'status', 'message', 'responseinms'])
 }
 
 const getAppStatus = (checks) => {
@@ -71,7 +91,7 @@ const getAppStatus = (checks) => {
 export async function getStatus(healthchecks) {
 
     const checks = await Promise.all( make_checks(healthchecks) )
-
+    
     return {
         applicationname: process.env.npm_package_name,
         applicationversion: process.env.npm_package_version,
