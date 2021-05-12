@@ -1,7 +1,7 @@
 
 
 default:
-  image: node:latest
+  image: gitlab.gmab.net.dr.dk:443/give-me-a-break/dependency_proxy/containers/node:latest
   tags:
     - gmabdocker.net.dr.dk
   
