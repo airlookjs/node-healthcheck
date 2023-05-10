@@ -151,9 +151,9 @@ const checks = [{
 },
 {
     name: `Connection to airlook API`, 
-    description: `Can fetch data from endpoint at ${config.AIRlOOK_API_ENDPOINT}gmaboutputs`,
+    description: `Can fetch data from endpoint at ${config.AIRlOOK_API_ENDPOINT}outputs`,
     checkFn: async function() { 
-        await api.get('gmaboutputs')
+        await api.get('outputs')
         return "Data fetched"
     }
 },
