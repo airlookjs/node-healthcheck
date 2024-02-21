@@ -4,9 +4,6 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  packages: write
 
 jobs:
   release:
@@ -19,6 +16,7 @@ jobs:
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
       id-token: write # to enable use of OIDC for npm provenance
+      packages: write # to be able to publish to npm
     steps:
       - uses: actions/checkout@v4
         with:
