@@ -3,14 +3,9 @@ Health / status endpoints for DR node applications, following XML scom standard.
 See a live example running at: https://ghub.gmab.net.dr.dk/status
 
 ## Installation:
-
-    $ echo \"@give-me-a-break:registry\" \"https://gitlab.gmab.net.dr.dk/api/v4/packages/npm/\" >> .yarnrc
-
-    $ yarn add '@give-me-a-break/dr-node-healthcheck'
-
+    $ npm add '@drdk/dr-node-healthcheck'
 
 ## Usage
-
 
 ### Simple check
 The simplest check has just a name and a check function.
