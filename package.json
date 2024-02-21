@@ -15,7 +15,8 @@
     "test": "mocha --require @babel/register 'src/*.spec.js'"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
   },
   "dependencies": {
     "express": "4.18.2",
