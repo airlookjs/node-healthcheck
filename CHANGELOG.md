@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/drdk/dr-node-healthcheck/compare/v1.3.2...v1.4.0) (2024-02-21)
+
+
+### Features
+
+* open access ([19e5428](https://github.com/drdk/dr-node-healthcheck/commit/19e542826c323fb7fdf092fba3ca896a5f430eed))
+
 ## [1.3.2](https://github.com/drdk/dr-node-healthcheck/compare/v1.3.1...v1.3.2) (2024-02-21)
 
 

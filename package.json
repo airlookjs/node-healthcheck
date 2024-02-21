@@ -1,6 +1,6 @@
 {
   "name": "@drdk/dr-node-healthcheck",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "main": "dist/healthcheck.routes.js",
   "license": "MIT",
   "repository": {
