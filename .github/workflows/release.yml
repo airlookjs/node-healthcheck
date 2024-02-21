@@ -10,7 +10,7 @@ permissions:
 jobs:
   release:
     # prevents this action from running on forks
-    if: github.repository == 'drdk/dr-node-healthcheckr'
+    if: github.repository == 'drdk/dr-node-healthcheck'
     name: Release
     runs-on: ubuntu-latest
     permissions:
