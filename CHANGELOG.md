@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/drdk/dr-node-healthcheck/compare/v1.3.1...v1.3.2) (2024-02-21)
+
+
+### Bug Fixes
+
+* docs and force release ([ec7a7a6](https://github.com/drdk/dr-node-healthcheck/commit/ec7a7a65853acfcdf84a0c16b0cf9c43ea79d4cc))
+
 ## [1.3.1](https://github.com/drdk/dr-node-healthcheck/compare/v1.3.0...v1.3.1) (2024-02-21)
 
 
