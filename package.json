@@ -1,11 +1,11 @@
 {
-  "name": "@give-me-a-break/dr-node-healthcheck",
+  "name": "@drdk/dr-node-healthcheck",
   "version": "1.2.1",
   "main": "dist/healthcheck.routes.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.gmab.net.dr.dk/give-me-a-break/dr-node-healthcheck.git"
+    "url": "https://github.com/drdk/dr-node-healthcheck"
   },
   "files": [
     "dist/"
