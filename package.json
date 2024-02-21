@@ -16,7 +16,7 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "dependencies": {
     "express": "4.18.2",

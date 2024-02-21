@@ -3,6 +3,12 @@ Health / status endpoints for DR node applications, following XML scom standard.
 See a live example running at: https://ghub.gmab.net.dr.dk/status
 
 ## Installation:
+Configure registry eg in .npmrc or .yarnrc
+```bash
+@drdk:registry=https://npm.pkg.github.com
+```
+
+
     $ npm add '@drdk/dr-node-healthcheck'
 
 ## Usage
