@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/drdk/dr-node-healthcheck/compare/v1.4.0...v1.4.1) (2024-02-22)
+
+
+### Bug Fixes
+
+* trigger deploy ([99829c6](https://github.com/drdk/dr-node-healthcheck/commit/99829c613f34251f897bd865710b431b78a31704))
+
 # [1.4.0](https://github.com/drdk/dr-node-healthcheck/compare/v1.3.2...v1.4.0) (2024-02-21)
 
 
