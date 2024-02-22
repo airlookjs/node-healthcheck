@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drdk/dr-node-healthcheck.git"
+    "url": "git+https://github.com/airlookjs/node-healthcheck.git"
   },
   "files": [
     "dist/"
