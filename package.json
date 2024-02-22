@@ -1,5 +1,5 @@
 {
-  "name": "@drdk/dr-node-healthcheck",
+  "name": "@airlookjs/node-healthcheck",
   "version": "1.4.1",
   "main": "dist/healthcheck.routes.js",
   "license": "MIT",
@@ -15,7 +15,6 @@
     "test": "mocha --require @babel/register 'src/*.spec.js'"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/drdk",
     "access": "public"
   },
   "dependencies": {

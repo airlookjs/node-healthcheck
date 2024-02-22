@@ -1,15 +1,7 @@
-Health / status endpoints for DR node applications, following XML scom standard. 
-
-See a live example running at: https://ghub.gmab.net.dr.dk/status
+Utility libraryto quickly set up health and status endpoints for node applications with xml and json responses. Routers for express and fastify are included. 
 
 ## Installation:
-Configure registry eg in .npmrc or .yarnrc
-```bash
-@drdk:registry=https://npm.pkg.github.com
-```
-
-
-    $ npm add '@drdk/dr-node-healthcheck'
+    $ npm install '@airlookjs/node-healthcheck'
 
 ## Usage
 
@@ -57,7 +49,6 @@ const check = {
 ```
 
 Returns message on succesfull check: "Check that localhost can reach API: test succesfull"
-
 
 The message can also be overwritten completely
 
@@ -127,7 +118,7 @@ A custom status may also be set but at the moment the applicationstatus only wor
 ```javascript
 import express from 'express'
 import cors from 'cors'
-import { getExpressHealthRoute } from '@drdk/dr-node-healthcheck'
+import { getExpressHealthRoute } from '@airlookjs/node-healthcheck'
 
 const app = express()
 app.use(cors())
