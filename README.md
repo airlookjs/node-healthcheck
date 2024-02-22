@@ -1,5 +1,9 @@
 Utility libraryto quickly set up health and status endpoints for node applications with xml and json responses. Routers for express and fastify are included. 
 
+[![NPM Version](https://img.shields.io/npm/v/@airlookjs/node-healthcheck.svg?style=flat-square&colorB=51C838)](https://www.npmjs.com/package/@airlookjs/node-healthcheck)
+
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+
 ## Installation:
     $ npm install '@airlookjs/node-healthcheck'
 
