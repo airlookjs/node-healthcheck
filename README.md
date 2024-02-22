@@ -127,7 +127,7 @@ A custom status may also be set but at the moment the applicationstatus only wor
 ```javascript
 import express from 'express'
 import cors from 'cors'
-import { getExpressHealthRoute } from '@give-me-a-break/dr-node-healthcheck'
+import { getExpressHealthRoute } from '@drdk/dr-node-healthcheck'
 
 const app = express()
 app.use(cors())
