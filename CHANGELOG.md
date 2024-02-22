@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/airlookjs/node-healthcheck/compare/v1.4.1...v1.4.2) (2024-02-22)
+
+
+### Bug Fixes
+
+* new location ([76b809c](https://github.com/airlookjs/node-healthcheck/commit/76b809ce4a074efa0c5b5c712409916a42a6486e))
+
 ## [1.4.1](https://github.com/drdk/dr-node-healthcheck/compare/v1.4.0...v1.4.1) (2024-02-22)
 
 

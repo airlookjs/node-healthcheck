@@ -1,6 +1,6 @@
 {
   "name": "@airlookjs/node-healthcheck",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": "dist/healthcheck.routes.js",
   "license": "MIT",
   "repository": {
