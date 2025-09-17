@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/airlookjs/node-healthcheck/compare/v1.4.2...v1.4.3) (2025-09-17)
+
+
+### Bug Fixes
+
+* **app:** trigger release ([25f1b67](https://github.com/airlookjs/node-healthcheck/commit/25f1b6767ce8cd03fa1e1f50f4ef0e0f8920b027))
+
 ## [1.4.2](https://github.com/airlookjs/node-healthcheck/compare/v1.4.1...v1.4.2) (2024-02-22)
 
 
